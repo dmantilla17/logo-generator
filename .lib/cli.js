@@ -1,55 +1,63 @@
 //importing inquirer to get user input
-const inquirer= require("inquirer");
-//creating an svg product 
-const SVG = require("./svg")
+const inquirer = require("inquirer");
+//creating an svg product
+const SVG = require("./svg");
 //creating circle,triangle,sqaures classes to create shape objects
-const { Circle,Triangle, Sqaure} =require("./shapes");
- 
+const { Circle, Triangle, Sqaure } = require("./shapes");
+
 ///Write file function to write data to a file
-const { writeFile }= require("fs/promises");
-const fs= require('fs');
+const { writeFile } = require("fs/promises");
+const fs = require("fs");
 
-class CLI{
-    run(){
-        return inquirer
-        .prompt([
-            {
-                name: "text",
-                type:"input",
-                message:"Enter text for the logo."
-            },
-            {
-                name: "textColor",
-                type:"input",
-                message:"Enter the text color."
-            },
-            {
-            name: "shapeType",
-                type:"list",
-                message:"Select a shape for the logo."
-            },
-        ])
-    
-        .then(({text,textColor,shapeType})=> {
-            if(shapeType == "circle"){
-                fs.writeFileSync(`logo.svg`,`<svg version=“1.1” width=“300" height=“200” xmlns=“http://www.w3.org/2000/svg”><${this.shapeType} cx=“150” cy=“100" r=“80” fill=“${shapeColor}” /><text x=“150” y=“125" font-size=“60” text-anchor=“middle” 
-                fill=${textColor}>${dbd}</svg>`)
-            }
-        )
-        }
-     else if(shapeType == "triangle"){
-        fs.writeFileSync(`logo.svg`,`<svg version=“1.1” width=“300" height=“200” xmlns=“http://www.w3.org/2000/svg”><${this.shapeType} cx=“150” cy=“100" r=“80” fill=“${shapeColor}” /><text x=“150” y=“125" font-size=“60” text-anchor=“middle” 
-        fill=${textColor}>${dbd}</svg>`)
-     }
-        else (shapeType == "circle"){
-            fs.writeFileSync(`logo.svg`,`<svg version=“1.1” width=“300" height=“200” xmlns=“http://www.w3.org/2000/svg”><${this.shapeType} cx=“150” cy=“100" r=“80” fill=“${shapeColor}” /><text x=“150” y=“125" font-size=“60” text-anchor=“middle” 
-            fill=${textColor}>${dbd}</svg>`)
-        }
-    } 
+function makeLogo() {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        message: "Enter text for the logo.",
+        name: "text",
+      },
+      {
+        type: "input",
+        message: "Enter the text color.",
+        name: "textColor",
+      },
+      {
+        type: "list",
+        message: "Select a shape for the logo.",
+        name: "shapeType",
+        choices: ["cirlce", "sqaure", "triangle"],
+      },
+      {
+        type: "input",
+        message: "choose a color",
+        name: "shapeColor",
+      },
+    ])
+    .then(({ text, textColor, shapeType, shapeColor }) => {
+      let shape;
+      switch (shapeType) {
+        case "triangle":
+          shape = new Triangle();
+          break;
 
-            
-        
-            
-    
-    
+        case "circle":
+          shape = new Circle();
+          break;
+        case "sqaure":
+          shape = new Sqaure();
+          break;
+      }
+      shape.setColor(shapeColor);
+      const svg = new SVG();
+      //using svg to choose shapes
+      svg.setShape(shape);
+
+      svg.setText(text, textColor);
+      //creating the logo to the file
+      return writeFile("my logo", svg.render());
+    })
+    .then(() => {
+      console.log("logo created");
+    });
 }
