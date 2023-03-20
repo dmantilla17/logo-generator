@@ -1,6 +1,6 @@
-const SVG = require(".svg");
+const SVG = require("./svg");
 const { default: test } = require("node:test");
-const { Sqaure } = require("./shapes");
+const { Circle } = require("./shapes");
 
 test("should render 300 x 200 svg element", () => {});
 test("should append text element", () => {});
